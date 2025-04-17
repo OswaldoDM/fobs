@@ -10,24 +10,11 @@ import Ecosystem from "./Components/Ecosystem";
 import Testimonials from "./Components/Testimonials";
 
 function App() {
-  const [query, setQuery] = useState<string>("");
-  const [likedPlaces, setLikedPlaces] = useState<Set<number>>(new Set());
-
-  function onLike(placeId: number) {
-    setLikedPlaces((prev) => {
-      const newLiked = new Set(prev);
-      if (newLiked.has(placeId)) {
-        newLiked.delete(placeId);
-      } else {
-        newLiked.add(placeId);
-      }
-      return newLiked;
-    });
-  }
+  const [query, setQuery] = useState<string>("");    
 
   function onSearch(e: InputChangeEvent) {
     setQuery(e.target.value);
-  }
+  }  
 
   return (
     <main>
@@ -38,7 +25,7 @@ function App() {
           <TransitionGroup />
           <SearchBox onSearch={onSearch} />
         </div>
-        <PlacesGrid query={query} likedPlaces={likedPlaces} onLike={onLike} />
+        <PlacesGrid query={query} />
         <TopPlaces />
         <Ecosystem />
         <Testimonials />

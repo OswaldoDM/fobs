@@ -1,14 +1,22 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { places } from "../Data/mockData";
 import StarSVG from "./SVGs/StarSVG";
 
 interface Props {
-  query: string;
-  likedPlaces: Set<number>;
-  onLike: (placeId: number) => void;
+  query: string;  
 }
 
-function PlacesGrid({ query, likedPlaces, onLike }: Props) {
+function PlacesGrid({ query }: Props) {  
+  const [likedPlaces, setLikedPlaces] = useState<number[]>([]);
+  
+  function onLike(placeId: number) {
+    setLikedPlaces((prev) =>
+      prev.includes(placeId)
+        ? prev.filter((id) => id !== placeId)
+        : [...prev, placeId]
+    );
+  }
+
   const filteredPlaces = useMemo(() => {
     return places.filter(
       (place) =>
@@ -16,29 +24,27 @@ function PlacesGrid({ query, likedPlaces, onLike }: Props) {
         place.city.toLowerCase().includes(query.toLowerCase()) ||
         place.place.toLowerCase().includes(query.toLowerCase())
     );
-  }, [query]);
+  }, [query]);  
 
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8'>
-      {filteredPlaces.map((place) => (
+      {filteredPlaces.map((place) => (      
         <div key={place.id} className='flex flex-col justify-center p-4'>
           <div className='w-full h-64 overflow-hidden rounded-lg shadow-lg border border-gray-500 relative'>
             <img
               src={place.img}
               alt={place.place}
-              className='w-full h-full object-cover cursor-pointer transition duration-1000 ease-in-out hover:scale-125'
+              className='w-full h-full object-cover cursor-pointer transition duration-500 ease-in-out hover:scale-125'
             />
-            <div className='bg-white size-9 z-10 absolute inset-0 rounded-full top-[2%] left-[85%]'>
+            <div className='bg-white size-9 absolute inset-0 rounded-full top-[2%] left-[85%]'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 24 24'
+                fill={likedPlaces.includes(place.id) ? '#ef4444' : '#fff'}
+                stroke={likedPlaces.includes(place.id) ? '#ef4444' : '#000'}
                 strokeWidth='1.5'
                 onClick={() => onLike(place.id)}
-                className={`size-6 relative inset-0 top-[20%] left-[15%] cursor-pointer ${
-                  likedPlaces.has(place.id)
-                    ? "fill-red-500 stroke-red-500"
-                    : "fill-none stroke-black"
-                } hover:fill-red-500 hover:stroke-red-500 transition-colors`}
+                className={`size-6 relative inset-0 top-[20%] left-[15%] cursor-pointer z-10 like-icon `}
               >
                 <path
                   strokeLinecap='round'
